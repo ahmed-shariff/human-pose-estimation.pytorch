@@ -97,10 +97,13 @@ def main():
 
     logger.info('=> loading model from {}'.format(config.TEST.MODEL_FILE))
     filename = config.TEST.MODEL_FILE
-    model.load_state_dict(torch.load(config.TEST.MODEL_FILE))
+    cuda_available = torch.cuda.is_available()
+    model.load_state_dict(torch.load(config.TEST.MODEL_FILE, map_location=None if cuda_available else torch.device('cpu')))
     logger.info('=> Converting...')
-    data = torch.zeros((1, 3, height, width)).cuda()
-    model.cuda()
+    data = torch.zeros((1, 3, height, width))
+    if cuda_available:
+        model.cuda()
+        data = data.cuda()
     model.float()
     head, filename = os.path.split(filename)
     if 'pth.tar' in filename:

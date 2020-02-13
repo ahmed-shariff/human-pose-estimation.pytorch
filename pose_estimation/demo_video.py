@@ -43,6 +43,12 @@ def parse_args():
                         required=True,
                         type=int)
 
+    parser.add_argument('--video_source',
+                        help='video source',
+                        required=False,
+                        default=0,
+                        type=str)
+    
     args = parser.parse_args()
 
     return args
@@ -109,8 +115,11 @@ def main():
 	elif args.backend == 'INFERENCE':
 		network.setPreferableBackend(cv2.dnn.DNN_BACKEND_INFERENCE_ENGINE)
 		network.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
-	
-	cap = cv2.VideoCapture(0)
+
+	if args.video_source == '0':
+		cap = cv2.VideoCapture(0)
+	else:
+		cap = cv2.VideoCapture(args.video_source)
 	
 	while True:
 		ret, videoframe = cap.read()
